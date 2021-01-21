@@ -30,14 +30,21 @@
     />
   </mat-form-field>
 
-  <mat-checkbox id="grid-sub-input" type="checkbox" [checked]="addSubgrid" [(ngModel)]="addSubgrid">
+  <mat-checkbox
+    id="grid-sub-input"
+    type="checkbox"
+    [checked]="addSubgrid"
+    [(ngModel)]="addSubgrid"
+  >
     Add subgrid
   </mat-checkbox>
 
-  <geo-grid
-    [intervalX]="intervalX"
-    [intervalY]="intervalY"
-    [gridSize]="gridSize"
-    [addSubgrid]="addSubgrid"
-  ></geo-grid>
+  <div>
+    <geo-grid
+      [intervalX]="intervalX"
+      [intervalY]="intervalY"
+      [gridSize]="gridSize"
+      [addSubgrid]="addSubgrid"
+    ></geo-grid>
+  </div>
 </div>

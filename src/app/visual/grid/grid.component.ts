@@ -107,11 +107,15 @@ export class GridComponent implements AfterViewInit {
     }
   }
 
-  redrawChart() {
-    const elem = document.getElementById('grid-sq' + this.randomized);
+  deleteElem(id: string) {
+    const elem = document.getElementById(id);
     if (elem && elem.parentNode) {
       elem.parentNode.removeChild(elem);
     }
+  }
+
+  redrawChart() {
+    this.deleteElem('grid-sq' + this.randomized);
     this.drawData();
   }
 
@@ -152,6 +156,27 @@ export class GridComponent implements AfterViewInit {
       }
     });
   };
+
+  drawShape = (startX: number, startY: number, endX: number, endY: number, angle?: number) => {
+    const color = this.getRandomColor();
+
+    this.deleteElem('drawn-polygon');
+
+    let coordA = `${startX * this.intervalX},${startY * this.intervalY}`;
+    let coordB = `${endX * this.intervalX},${startY* this.intervalY}`;
+    let coordC = `${endX * this.intervalX},${endY* this.intervalY}`;
+    let coordD = `${startX * this.intervalX},${endY* this.intervalY}`;
+
+    d3.select('#grid-sq' + this.randomized)
+      .append('polygon')
+      .attr('id', 'drawn-polygon')
+      .attr("points", `${coordA} ${coordB} ${coordC} ${coordD}`)
+      .attr('stroke', color)
+      .attr('stroke-width', 1)
+      .attr('stroke-opacity', 1)
+      .attr("fill", color)
+      .attr("fill-opacity", 0.4);
+  }
 
   drawData = () => {
     const size = this.gridSize;
@@ -194,5 +219,71 @@ export class GridComponent implements AfterViewInit {
           .attr('y2', size * i);
       }
     });
+    this.addSnapPointsToGrid(); 
   };
+
+  addSnapPointsToGrid = () => {
+    const size = this.gridSize;
+    const intervalHeight = this.intervalY;
+    const intervalWidth = this.intervalX;
+    const height = size * intervalHeight;
+    const width = size * intervalWidth;
+
+    console.log('hello');
+
+    const self = this;
+
+    d3.selectAll('.grid-box').each(function (data, index) {
+      for (let i = 0; i < intervalWidth + 1; i++) {
+        for (let ii = 0; ii  < intervalHeight + 1; ii++) {
+          d3.select(this)
+            .append('circle')
+            .attr("cy", size * ii) 
+            .attr("cx", size * i)
+            .attr("id", `snap-pt-${i}-${ii}`)
+            .attr("r", 3)
+            .style("fill", "steelblue")
+            .on("mouseover", self.handleMouseOver)
+            .on("mouseout", self.handleMouseOut)
+            .on("click", self.drawLine);
+        }
+      }
+    });
+  };
+
+  handleMouseOut(elem: any) {
+    d3.select(`#${elem.target.id}`)
+      .style('fill', "steelblue")
+      .attr('r', 3);
+  }
+
+  handleMouseOver = (elem: any) => {
+    d3.select(`#${elem.target.id}`)
+      .style('fill', "orange")
+      .attr('r', 4);
+  }
+
+  drawLine = (elem: any) => {
+    const size = this.gridSize;
+    const intervalHeight = this.intervalY;
+    const intervalWidth = this.intervalX;
+    const height = size * intervalHeight;
+    const width = size * intervalWidth;
+    console.log(elem.target.id);
+    const coords = elem.target.id.replace("snap-pt-", "").split("-");
+    const startX = parseInt(coords[0]);
+    const startY = parseInt(coords[1]);
+    console.log(startX, startY, size, intervalHeight, intervalWidth);
+    d3.select('#grid-sq' + this.randomized)
+      .append('line')
+      .style('stroke', 'red')
+      .style('stroke-width', 2)
+      .style('stroke-opacity', 0.7)
+      .attr('id', 'drawn-line')
+      .attr('x1', startX * size)
+      .attr('y1', startY * size)
+      .attr('x2', 0)
+      .attr('y2', 0)
+  }
+
 }

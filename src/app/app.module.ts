@@ -8,11 +8,15 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { GridComponent } from './visual/grid/grid.component';
+import { TilesComponent } from './visual/tiles/tiles.component';
+import { HomeComponent } from './visual/home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    GridComponent
+    GridComponent,
+    TilesComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
